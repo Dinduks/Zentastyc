@@ -1,7 +1,17 @@
-@(message: String)
-
-@main("Welcome to Play 2.1") {
-    
-    @play20.welcome(message)
-    
+@main("Zenhungry") {
+<div ng-controller="OmnomCtrl">
+    <a href="#" id="newgroup">Eat elsewhere</a>
+    <div>
+        <ul class="group">
+            <li ng-repeat="group in groups">
+                <h4>{{group.name}}</h4>
+                <ul>
+                    <li ng-repeat="user in group.users">
+                        {{user.name}}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
 }
