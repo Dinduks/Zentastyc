@@ -1,0 +1,6 @@
+/* "auto" makes the left and right margins center the wrapper */
+#wrap {
+  width: 900px;
+  margin: 0 auto;
+  margin-top: 40px;
+}

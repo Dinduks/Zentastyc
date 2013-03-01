@@ -1,7 +1,8 @@
 @main("Zentastyc") {
+<div id="wrap">
 <div ng-controller="ZentastycCtrl">
-   <button id="newgroup" class="btn btn-primary" type="button">Eat elsewhere</button>
     <div>
+        <h2>Restaurants</h2> 
         <ul class="group">
             <li ng-repeat="group in groups">
                 <h4>{{group.name}}</h4>
@@ -13,5 +14,7 @@
             </li>
         </ul>
     </div>
+    <button id="newgroup" class="btn btn-primary" type="button">Eat elsewhere</button>
+</div>
 </div>
 }
