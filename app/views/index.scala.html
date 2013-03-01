@@ -6,8 +6,9 @@
         <h2>Zen<span class="tasty">tasty</span>c</h2>
 
         <ul>
-            <li ng-repeat="restaurant in restaurants" ng-hover="hoverRestaurant(restaurant-$index)" class="restaurant restaurant-{{$index}}">
-                <h4 ng-click="joinRestaurant(restaurant.name)">{{restaurant.name}}</h4>
+            <li ng-click="joinRestaurant(restaurant.name)" ng-repeat="restaurant in restaurants"
+                ng-hover="hoverRestaurant(restaurant-$index)" class="restaurant restaurant-{{$index}}">
+                <h4>{{restaurant.name}}</h4>
                 <ul>
                     <li ng-repeat="user in restaurant.users">
                         {{user.name}}
