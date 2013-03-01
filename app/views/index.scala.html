@@ -1,13 +1,12 @@
 @()(implicit req: play.api.mvc.RequestHeader)
 
 @main("Zentastyc") {
-<div id="wrap">
-<div ng-controller="ZentastycCtrl">
-    <div>
-        <h2>Restaurants</h2>
+<div ng-controller="ZentastycCtrl" id="container">
+    <div id="restaurants">
+        <h2>Zen<span class="tasty">tasty</span>c</h2>
 
-        <ul class="restaurants">
-            <li ng-repeat="restaurant in restaurants">
+        <ul>
+            <li ng-repeat="restaurant in restaurants" ng-hover="hoverRestaurant(restaurant-$index)" class="restaurant restaurant-{{$index}}">
                 <h4 ng-click="joinRestaurant(restaurant.name)">{{restaurant.name}}</h4>
                 <ul>
                     <li ng-repeat="user in restaurant.users">
@@ -17,7 +16,9 @@
             </li>
         </ul>
     </div>
-    <button ng-click="newRestaurant()" class="btn btn-primary" type="button">Eat elsewhere</button>
-</div>
+
+    <div id="btn-container">
+        <button ng-click="newRestaurant()" class="btn btn-primary" type="button">Eat elsewhere</button>
+    </div>
 </div>
 }

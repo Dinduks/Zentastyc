@@ -1,6 +1,51 @@
-/* "auto" makes the left and right margins center the wrapper */
-#wrap {
-  width: 900px;
-  margin: 0 auto;
-  margin-top: 40px;
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+#container {
+  padding: 2em;
+  height: calc(100% - 2em);
+  height: -webkit-calc(100% - 2em);
+  height: -moz-calc(100% - 2em);
+}
+
+#restaurants {
+  height: 80%;
+}
+
+#btn-container {
+  height: 20%;
+  text-align: center;
+}
+
+.btn {
+  height: 80%;
+  width: 50%;
+  font-size: 2em;
+}
+
+#restaurants {
+  width: 100%;
+}
+
+#restaurants .restaurant {
+  width: 30%;
+  padding-right: 5%;
+  float: left;
+  cursor: pointer;
+  border-radius: 1em;
+  padding-bottom: 1em;
+}
+
+#restaurants .restaurant:last-child {
+  padding-right: 0;
+}
+
+.tasty {
+  color: #006dcc;
+  font-style: italic;
 }
