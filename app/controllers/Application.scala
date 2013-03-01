@@ -9,7 +9,7 @@ import collection.mutable
 
 object Application extends Controller {
   
-  val hungryUsers: mutable.Map[String, HungryUser] = mutable.Map.empty
+  val hungryUsers: HungryUsersIndex = mutable.Map.empty
   val logger = Logger
   
   def index = Action {

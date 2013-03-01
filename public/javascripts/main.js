@@ -4,11 +4,12 @@ var ws;
 var user;
 var currentGroupName;
 
-function OmnomCtrl($scope) {
+function ZentastycCtrl($scope) {
     var id;
-    var name;
+    var name = "";
 
-    name = prompt("Name?");
+    while (null === name || 0 === name.length)
+        name = prompt("Name?");
 
     $scope.users = {};
     $scope.groups = { none: new Group("none") };
