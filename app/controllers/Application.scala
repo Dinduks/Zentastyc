@@ -13,7 +13,7 @@ object Application extends Controller {
 
   val logger = Logger
 
-  def index = Action {
+  def index = Action { implicit request =>
     Ok(views.html.index())
   }
 

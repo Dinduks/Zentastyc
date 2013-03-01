@@ -17,7 +17,7 @@ function ZentastycCtrl($scope) {
 
     id = name;
 
-    ws = new WebSocket("ws://localhost:9000/ws?id=" + id + "&name=" + name);
+    ws = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.ws(id, name).url);
 
     ws.onopen = function () {
         $scope.$apply(function () {
