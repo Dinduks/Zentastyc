@@ -16,6 +16,7 @@ function ZentastycCtrl($scope) {
     id = guid();
 
     ws = new WebSocket("ws://localhost:9000/ws?id=" + id + "&name=" + name);
+
     ws.onopen = function () {
         $scope.$apply(function () {
             user = new User(name, id);
@@ -25,7 +26,7 @@ function ZentastycCtrl($scope) {
         });
     };
 
-    var receiveEvent = function(event) {
+    ws.onmessage = function(event) {
         var data = JSON.parse(event.data);
         var restaurants = {};
 
@@ -37,9 +38,7 @@ function ZentastycCtrl($scope) {
         $scope.$apply(function() {
             $scope.restaurants = restaurants;
         });
-    }
-
-    ws.onmessage = receiveEvent;
+    };
 
     $(document).ready(function () {
         var handleNewRestaurant = function (event, $scope) {

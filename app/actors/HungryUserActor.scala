@@ -41,32 +41,16 @@ class HungryUserActor extends Actor {
     case Connect(id, name) => {
       hungryUsers += id -> HungryUser(id, name, "none")
       sender ! outEnumerator
-      self ! NotifyJoin(id, name)
-    }
-
-    case NotifyJoin(id, name) => {
-      notifyAll("join", id, name, "", "has entered the room")
-    }
-
-    case Quit(id) => {
-      notifyAll("quit", id, "", "", "has left the room")
+      self ! updateAll
     }
   }
 
-  def notifyAll(kind: String, id: String, name: String, group: String, message: String) {
-    val msg = JsObject(
-      Seq(
-        "kind" -> JsString(kind),
-        "id" -> JsString(id),
-        "users" -> Json.toJson(hungryUsers)))
+  def updateAll {
+    val msg = JsObject(Seq("users" -> Json.toJson(hungryUsers)))
     chatChannel.push(msg)
   }
 
 }
 
 case class Connect(id: String, name: String)
-case class Quit(id: String)
-case class NotifyJoin(id: String, name: String)
-
-case class Connected(enumerator: Enumerator[JsValue])
-case class CannotConnect(msg: String)
+case class NewRestaurant(userId: String, restaurantName: String)
