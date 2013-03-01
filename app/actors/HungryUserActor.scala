@@ -17,12 +17,20 @@ import scala.concurrent.duration._
 object HungryUsersHandler {
 
   implicit val timeout = Timeout(1 second)
-  lazy val default: ActorRef = Akka.system.actorOf(Props[HungryUserActor])
+  lazy val mainActor: ActorRef = Akka.system.actorOf(Props[HungryUserActor])
 
   def join(id: String, name: String): scala.concurrent.Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
-    (default ? Connect(id, name)).map {
+    (mainActor ? Connect(id, name)).map {
       case enumerator: Enumerator[JsValue] => {
         val iteratee = Iteratee.foreach[JsValue] { event =>
+          (event \ "kind").as[String] match {
+            case "newrestaurant" => {
+              mainActor ! NewRestaurant(
+                (event \ "data" \ "userId").as[String],
+                (event \ "data" \ "restaurantName").as[String]
+              )
+            }
+          }
         }.mapDone { _ =>
         }
         (iteratee, enumerator)
@@ -41,6 +49,12 @@ class HungryUserActor extends Actor {
     case Connect(id, name) => {
       hungryUsers += id -> HungryUser(id, name, "none")
       sender ! outEnumerator
+      self ! updateAll
+    }
+    case NewRestaurant(id, restaurantName) => {
+      hungryUsers.get(id).map { hungryUser =>
+        hungryUsers += id -> hungryUser.copy(restaurant = restaurantName)
+      }
       self ! updateAll
     }
   }

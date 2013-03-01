@@ -22,7 +22,6 @@ function ZentastycCtrl($scope) {
             user = new User(name, id);
             $scope.restaurants.none.push(user);
             currentRestaurantName = "none";
-            ws.send(JSON.stringify({ kind: "connect", data: user }));
         });
     };
 
