@@ -14,7 +14,7 @@ function ZentastycCtrl($scope) {
     $scope.users = {};
     $scope.groups = { none: new Group("none") };
 
-    ws = new WebSocket("ws://localhost:9005/ws");
+    ws = new WebSocket("ws://localhost:9000/ws");
 
     id = guid();
 
@@ -67,4 +67,3 @@ function Group(name) {
 function guid() {
     return (new Date()).getTime() + Math.random();
 }
-
