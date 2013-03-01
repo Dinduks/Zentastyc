@@ -23,12 +23,11 @@ object HungryUsersHandler {
     (mainActor ? Connect(id, name)).map {
       case enumerator: Enumerator[JsValue] => {
         val iteratee = Iteratee.foreach[JsValue] { event =>
+          val userId = (event \ "data" \ "userId").as[String]
+          val restaurantName = (event \ "data" \ "restaurantName").as[String]
           (event \ "kind").as[String] match {
-            case "newrestaurant" => {
-              mainActor ! NewRestaurant(
-                (event \ "data" \ "userId").as[String],
-                (event \ "data" \ "restaurantName").as[String]
-              )
+            case "joinrestaurant" => {
+              mainActor ! JoinRestaurant(userId, restaurantName)
             }
           }
         }.mapDone { _ =>
@@ -51,7 +50,7 @@ class HungryUserActor extends Actor {
       sender ! outEnumerator
       self ! updateAll
     }
-    case NewRestaurant(id, restaurantName) => {
+    case JoinRestaurant(id, restaurantName) => {
       hungryUsers.get(id).map { hungryUser =>
         hungryUsers += id -> hungryUser.copy(restaurant = restaurantName)
       }
@@ -67,4 +66,4 @@ class HungryUserActor extends Actor {
 }
 
 case class Connect(id: String, name: String)
-case class NewRestaurant(userId: String, restaurantName: String)
+case class JoinRestaurant(userId: String, restaurantName: String)

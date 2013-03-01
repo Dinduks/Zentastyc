@@ -41,25 +41,26 @@ function ZentastycCtrl($scope) {
         });
     };
 
+    $scope.joinRestaurant = function (restaurantName) {
+        var restaurant;
+
+        ws.send(JSON.stringify({ kind: "joinrestaurant", data: { userId: user.id, restaurantName: restaurantName }}));
+
+        restaurant = new Restaurant(restaurantName);
+        $scope.restaurants[restaurantName] = restaurant;
+        $scope.restaurants[restaurantName].push(user);
+        delete $scope.restaurants[currentRestaurantName];
+        currentRestaurantName = restaurantName;
+    }
+
     $(document).ready(function () {
-        var handleNewRestaurant = function (event, $scope) {
-            var restaurantName;
-            var restaurant;
 
-            restaurantName = prompt("Where?");
-            ws.send(JSON.stringify({ kind: "newrestaurant", data: { userId: user.id, restaurantName: restaurantName }}));
-
-            restaurant = new Restaurant(restaurantName);
-            $scope.$apply(function () {
-                $scope.restaurants[restaurantName] = restaurant;
-                $scope.restaurants[restaurantName].push(user);
-                delete $scope.restaurants[currentRestaurantName];
-                currentRestaurantName = restaurantName;
-            });
-
-            event.preventDefault();
+        var handleNewRestaurant = function (event) {
+          var restaurantName = prompt("Where?");
+          $scope.joinRestaurant(restaurantName);
         };
-        $("#newrestaurant").click(function (event) { handleNewRestaurant(event, $scope) });
+        $("#newrestaurant").click(function (event) { handleNewRestaurant(event) });
+
     });
 }
 
