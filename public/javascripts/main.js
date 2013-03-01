@@ -6,14 +6,16 @@ var currentRestaurantName;
 
 function ZentastycCtrl($scope) {
     var id;
-    var name = "";
+    var name;
 
-    while (null === name || 0 === name.length)
+    while (null === (name = localStorage.getItem('name')) || 0 === localStorage.getItem('name').length) {
         name = prompt("Name?");
+        localStorage.setItem('name', name);
+    }
 
-    $scope.restaurants = { none: new Restaurant("none") };
+    $scope.restaurants = { none: new Restaurant("No restaurant") };
 
-    id = guid();
+    id = name;
 
     ws = new WebSocket("ws://localhost:9000/ws?id=" + id + "&name=" + name);
 
@@ -21,7 +23,7 @@ function ZentastycCtrl($scope) {
         $scope.$apply(function () {
             user = new User(name, id);
             $scope.restaurants.none.push(user);
-            currentRestaurantName = "none";
+            currentRestaurantName = "No restaurant";
         });
     };
 
@@ -73,8 +75,4 @@ function Restaurant(name) {
     this.users = [];
 
     this.push = function (user) { this.users.push(user); };
-}
-
-function guid() {
-    return (new Date()).getTime() + Math.random();
 }

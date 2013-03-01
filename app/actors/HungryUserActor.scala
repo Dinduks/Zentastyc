@@ -47,7 +47,7 @@ class HungryUserActor extends Actor {
 
   def receive = {
     case Connect(id, name) => {
-      hungryUsers += id -> HungryUser(id, name, "none")
+      hungryUsers += id -> HungryUser(id, name, "No restaurant")
       sender ! outEnumerator
       self ! updateAll
     }
