@@ -23,10 +23,10 @@ object HungryUsersHandler {
     val result = (mainActor ? Connect(id, name)).map {
       case enumerator: Enumerator[JsValue] => {
         val iteratee = Iteratee.foreach[JsValue] { event =>
-          val userId = (event \ "data" \ "userId").as[String]
-          val restaurantName = (event \ "data" \ "restaurantName").as[String]
           (event \ "kind").as[String] match {
             case "joinrestaurant" => {
+              val userId = (event \ "data" \ "userId").as[String]
+              val restaurantName = (event \ "data" \ "restaurantName").as[String]
               mainActor ! JoinRestaurant(userId, restaurantName)
             }
           }
@@ -46,7 +46,7 @@ object HungryUsersHandler {
 class HungryUserActor extends Actor {
 
   val hungryUsers: HungryUsersIndex = mutable.Map.empty
-  val (outEnumerator, chatChannel) = Concurrent.broadcast[JsValue]
+  val (outEnumerator, outChannel) = Concurrent.broadcast[JsValue]
 
   def receive = {
     case Connect(id, name) => {
@@ -67,11 +67,11 @@ class HungryUserActor extends Actor {
 
   def updateAll {
     val msg = JsObject(Seq("users" -> Json.toJson(hungryUsers)))
-    chatChannel.push(msg)
+    outChannel.push(msg)
   }
 
 }
 
 case class Connect(id: String, name: String)
 case class JoinRestaurant(userId: String, restaurantName: String)
-case class UpdateAll
+case class UpdateAll()
