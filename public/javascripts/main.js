@@ -53,14 +53,11 @@ function ZentastycCtrl($scope) {
         currentRestaurantName = restaurantName;
     }
 
+    $scope.newRestaurant = function() {
+       var restaurantName = prompt("Where?");
+        $scope.joinRestaurant(restaurantName);
+    }
     $(document).ready(function () {
-
-        var handleNewRestaurant = function (event) {
-          var restaurantName = prompt("Where?");
-          $scope.joinRestaurant(restaurantName);
-        };
-        $("#newrestaurant").click(function (event) { handleNewRestaurant(event) });
-
     });
 }
 
