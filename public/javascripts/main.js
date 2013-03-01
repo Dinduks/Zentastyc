@@ -11,22 +11,35 @@ function ZentastycCtrl($scope) {
     while (null === name || 0 === name.length)
         name = prompt("Name?");
 
-    $scope.users = {};
     $scope.groups = { none: new Group("none") };
-
-    ws = new WebSocket("ws://localhost:9000/ws");
 
     id = guid();
 
+    ws = new WebSocket("ws://localhost:9000/ws?id=" + id + "&name=" + name);
     ws.onopen = function () {
         $scope.$apply(function () {
             user = new User(name, id);
-            $scope.users.id = user;
             $scope.groups.none.push(user);
             currentGroupName = "none";
             ws.send(JSON.stringify({ kind: "connect", data: user }));
         });
     };
+
+    var receiveEvent = function(event) {
+        var data = JSON.parse(event.data);
+        var groups = {};
+
+        data.users.map(function(user) {
+            if (undefined === groups[user.group]) groups[user.group] = new Group(user.group);
+            groups[user.group].push(user);
+        });
+
+        $scope.$apply(function() {
+            $scope.groups = groups;
+        });
+    }
+
+    ws.onmessage = receiveEvent;
 
     $(document).ready(function () {
         var handleNewGroup = function (event, $scope) {

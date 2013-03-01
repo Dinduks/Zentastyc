@@ -4,6 +4,7 @@ import akka.actor.{ActorRef, Props, Actor}
 import akka.util.Timeout
 import akka.pattern.ask
 import collection.mutable
+import models.JsonFormatters._
 import models.HungryUsersIndex
 import models.HungryUser
 import play.api.libs.concurrent.Execution.Implicits._
@@ -19,19 +20,12 @@ object HungryUsersHandler {
   lazy val default: ActorRef = Akka.system.actorOf(Props[HungryUserActor])
 
   def join(id: String, name: String): scala.concurrent.Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
-    (default ? Join(id, name)).map {
-      case Connected(enumerator) => {
+    (default ? Connect(id, name)).map {
+      case enumerator: Enumerator[JsValue] => {
         val iteratee = Iteratee.foreach[JsValue] { event =>
-          //          default ! Talk(username, (event \ "text").as[String])
         }.mapDone { _ =>
-          //          default ! Quit(username)
         }
-        (iteratee,enumerator)
-      }
-      case CannotConnect(error) => {
-        val iteratee = Done[JsValue,Unit]((),Input.EOF)
-        val enumerator =  Enumerator[JsValue](JsObject(Seq("error" -> JsString(error)))).andThen(Enumerator.enumInput(Input.EOF))
-        (iteratee,enumerator)
+        (iteratee, enumerator)
       }
     }
   }
@@ -44,14 +38,10 @@ class HungryUserActor extends Actor {
   val (outEnumerator, chatChannel) = Concurrent.broadcast[JsValue]
 
   def receive = {
-    case Join(id, name) => {
-      if(hungryUsers.contains(name)) {
-        sender ! CannotConnect("This username is already used")
-      } else {
-        hungryUsers += id -> HungryUser(id, name, "none")
-        sender ! Connected(outEnumerator)
-        self ! NotifyJoin(id, name)
-      }
+    case Connect(id, name) => {
+      hungryUsers += id -> HungryUser(id, name, "none")
+      sender ! outEnumerator
+      self ! NotifyJoin(id, name)
     }
 
     case NotifyJoin(id, name) => {
@@ -59,7 +49,6 @@ class HungryUserActor extends Actor {
     }
 
     case Quit(id) => {
-//      members = members - username
       notifyAll("quit", id, "", "", "has left the room")
     }
   }
@@ -69,20 +58,13 @@ class HungryUserActor extends Actor {
       Seq(
         "kind" -> JsString(kind),
         "id" -> JsString(id),
-        "user" -> JsString(name),
-        "group" -> JsString(group)
-        //        "group" -> JsString(group),
-//        "members" -> JsArray(
-//          hungryUsers.toList.map(_ => Json.toJson(_))
-//        )
-      )
-    )
+        "users" -> Json.toJson(hungryUsers)))
     chatChannel.push(msg)
   }
 
 }
 
-case class Join(id: String, name: String)
+case class Connect(id: String, name: String)
 case class Quit(id: String)
 case class NotifyJoin(id: String, name: String)
 
