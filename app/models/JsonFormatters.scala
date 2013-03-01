@@ -11,13 +11,13 @@ object JsonFormatters {
     def reads(json: JsValue)  = JsSuccess(HungryUser(
       (json \ "id").as[String],
       (json \ "name").as[String],
-      (json \ "group").as[String]
+      (json \ "restaurant").as[String]
     ))
 
     def writes(hungryUser: HungryUser) = JsObject(Seq(
       "id" -> JsString(hungryUser.id),
       "name" -> JsString(hungryUser.name),
-      "group" -> JsString(hungryUser.group)
+      "restaurant" -> JsString(hungryUser.restaurant)
     ))
   }
 
@@ -30,7 +30,7 @@ object JsonFormatters {
           JsObject(Seq(
             "id" -> JsString(hungryUser.id),
             "name" -> JsString(hungryUser.name),
-            "group" -> JsString(hungryUser.group)
+            "restaurant" -> JsString(hungryUser.restaurant)
           ))
         }.toSeq
       )

@@ -2,7 +2,7 @@
 
 var ws;
 var user;
-var currentGroupName;
+var currentRestaurantName;
 
 function ZentastycCtrl($scope) {
     var id;
@@ -11,7 +11,7 @@ function ZentastycCtrl($scope) {
     while (null === name || 0 === name.length)
         name = prompt("Name?");
 
-    $scope.groups = { none: new Group("none") };
+    $scope.restaurants = { none: new Restaurant("none") };
 
     id = guid();
 
@@ -19,47 +19,47 @@ function ZentastycCtrl($scope) {
     ws.onopen = function () {
         $scope.$apply(function () {
             user = new User(name, id);
-            $scope.groups.none.push(user);
-            currentGroupName = "none";
+            $scope.restaurants.none.push(user);
+            currentRestaurantName = "none";
             ws.send(JSON.stringify({ kind: "connect", data: user }));
         });
     };
 
     var receiveEvent = function(event) {
         var data = JSON.parse(event.data);
-        var groups = {};
+        var restaurants = {};
 
         data.users.map(function(user) {
-            if (undefined === groups[user.group]) groups[user.group] = new Group(user.group);
-            groups[user.group].push(user);
+            if (undefined === restaurants[user.restaurant]) restaurants[user.restaurant] = new Restaurant(user.restaurant);
+            restaurants[user.restaurant].push(user);
         });
 
         $scope.$apply(function() {
-            $scope.groups = groups;
+            $scope.restaurants = restaurants;
         });
     }
 
     ws.onmessage = receiveEvent;
 
     $(document).ready(function () {
-        var handleNewGroup = function (event, $scope) {
-            var groupName;
-            var group;
+        var handleNewRestaurant = function (event, $scope) {
+            var restaurantName;
+            var restaurant;
 
-            groupName = prompt("Where?");
-            ws.send(JSON.stringify({ kind: "newgroup", data: { userId: user.id, groupName: groupName }}));
+            restaurantName = prompt("Where?");
+            ws.send(JSON.stringify({ kind: "newrestaurant", data: { userId: user.id, restaurantName: restaurantName }}));
 
-            group = new Group(groupName);
+            restaurant = new Restaurant(restaurantName);
             $scope.$apply(function () {
-                $scope.groups[groupName] = group;
-                $scope.groups[groupName].push(user);
-                delete $scope.groups[currentGroupName];
-                currentGroupName = groupName;
+                $scope.restaurants[restaurantName] = restaurant;
+                $scope.restaurants[restaurantName].push(user);
+                delete $scope.restaurants[currentRestaurantName];
+                currentRestaurantName = restaurantName;
             });
 
             event.preventDefault();
         };
-        $("#newgroup").click(function (event) { handleNewGroup(event, $scope) });
+        $("#newrestaurant").click(function (event) { handleNewRestaurant(event, $scope) });
     });
 }
 
@@ -69,7 +69,7 @@ function User(name, id) {
     this.id = id.toString();
 }
 
-function Group(name) {
+function Restaurant(name) {
     var name, users;
     this.name = name;
     this.users = [];
