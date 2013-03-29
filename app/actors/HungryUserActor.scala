@@ -30,6 +30,8 @@ object HungryUsersHandler {
               mainActor ! JoinRestaurant(userId, restaurantName)
             }
           }
+        }.mapDone { _ =>
+          mainActor ! HungryQuit(id, name)
         }
 
         (iteratee, enumerator)
@@ -47,10 +49,11 @@ class HungryUserActor extends Actor {
 
   val hungryUsers: HungryUsersIndex = mutable.Map.empty
   val (outEnumerator, outChannel) = Concurrent.broadcast[JsValue]
+  val noRestaurantTitle = "No restaurant"
 
   def receive = {
     case Connect(id, name) => {
-      if (!hungryUsers.contains(id)) hungryUsers += id -> HungryUser(id, name, "No restaurant")
+      if (!hungryUsers.contains(id)) hungryUsers += id -> HungryUser(id, name, noRestaurantTitle)
       sender ! outEnumerator
       updateAll
     }
@@ -61,6 +64,13 @@ class HungryUserActor extends Actor {
       updateAll
     }
     case UpdateAll => {
+      updateAll
+    }
+
+    case HungryQuit(userId, username) => {
+      hungryUsers.get(userId).map { hungryUser =>
+        hungryUsers -= username
+      }
       updateAll
     }
   }
@@ -75,3 +85,4 @@ class HungryUserActor extends Actor {
 case class Connect(id: String, name: String)
 case class JoinRestaurant(userId: String, restaurantName: String)
 case class UpdateAll()
+case class HungryQuit(userId: String, username: String)
