@@ -21,4 +21,8 @@ object Application extends Controller {
     HungryUsersHandler.join(id, name)
   }
 
+  def wsChat(id: String, name: String) = WebSocket.async[JsValue] { request =>
+    ChatHandler.join(name)
+  }
+
 }

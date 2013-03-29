@@ -78,6 +78,9 @@ div#users-list {
     min-height: calc(100% - 20px);
     min-height: -webkit-calc(100% - 20px);
     min-height: -moz-calc(100% - 20px);
+    min-height: calc(100% - 20px);
+    min-height: -webkit-calc(100% - 20px);
+    min-height: -moz-calc(100% - 20px);
     width: calc(100% - 10px);
     width: -webkit-calc(100% - 20px);
     width: -moz-calc(100% - 20px);
@@ -87,6 +90,7 @@ div#users-list {
     border-radius: 4px;
     border: 1px solid #ccc;
     padding: 4px 6px;
+    overflow-y: scroll;
 }
 
 input#chat-input {
