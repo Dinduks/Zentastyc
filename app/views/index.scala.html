@@ -1,25 +1,42 @@
 @()(implicit req: play.api.mvc.RequestHeader)
 
 @main("Zentastyc") {
-<div ng-controller="ZentastycCtrl" id="container">
-    <div id="restaurants">
-        <h2>Zen<span class="tasty">tasty</span>c</h2>
+<div ng-controller="ZentastycCtrl" id="wrapper">
+    <div id="container">
+        <div id="restaurants">
+            <h2>Zen<span class="tasty">tasty</span>c</h2>
 
-        <ul>
-            <li ng-click="joinRestaurant(restaurant.name)" ng-repeat="restaurant in restaurants"
-                ng-hover="hoverRestaurant(restaurant-$index)" class="restaurant restaurant-{{$index}}">
-                <h4>{{restaurant.name}}</h4>
-                <ul>
-                    <li ng-repeat="user in restaurant.users">
-                        {{user.name}}
-                    </li>
-                </ul>
-            </li>
-        </ul>
+            <ul>
+                <li ng-click="joinRestaurant(restaurant.name)" ng-repeat="restaurant in restaurants"
+                    ng-hover="hoverRestaurant(restaurant-$index)" class="restaurant restaurant-{{$index}}">
+                    <h4>{{restaurant.name}}</h4>
+                    <ul>
+                        <li ng-repeat="user in restaurant.users">
+                            {{user.name}}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div id="btn-container">
+            <button ng-click="newRestaurant()" class="btn btn-primary" type="button">Eat elsewhere</button>
+        </div>
     </div>
 
-    <div id="btn-container">
-        <button ng-click="newRestaurant()" class="btn btn-primary" type="button">Eat elsewhere</button>
+    <div id="chat-container">
+        <div id="users-list">
+            <ul>
+                <li>user1</li>
+                <li>user2</li>
+                <li>user3</li>
+            </ul>
+        </div>
+        <div id="chat-area">
+            <p id="chat-messages"></p>
+            <form ng-submit="sendMessage()"><input type="text" name="message" id="chat-input" /></form>
+        </div>
     </div>
 </div>
 }
+
