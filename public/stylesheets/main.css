@@ -75,9 +75,9 @@ div#users-list {
 }
 
 #chat-messages  {
-    min-height: calc(100% - 20px);
-    min-height: -webkit-calc(100% - 20px);
-    min-height: -moz-calc(100% - 20px);
+    max-height: calc(100% - 20px);
+    max-height: -webkit-calc(100% - 20px);
+    max-height: -moz-calc(100% - 20px);
     min-height: calc(100% - 20px);
     min-height: -webkit-calc(100% - 20px);
     min-height: -moz-calc(100% - 20px);
