@@ -8,7 +8,8 @@ function ZentastycCtrl($scope) {
     var id;
     var name;
 
-    while (null === (name = localStorage.getItem('name')) || 0 === localStorage.getItem('name').length) {
+    name = localStorage.getItem('name');
+    while (name === null || name === "null" || name.trim().length === 0) {
         name = prompt("Name?");
         localStorage.setItem('name', name);
     }
