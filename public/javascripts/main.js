@@ -46,6 +46,7 @@ function ZentastycCtrl($scope) {
 
         // Immediate visual feedback after sending a message
         $("#chat-messages").append("&gt; " + username + ": " + this.message + "<br>");
+        $(document).trigger('newmessage');
     }
 
 }
@@ -107,13 +108,14 @@ function chatWebSocketBuilder(username, $scope) {
 
         switch (data.kind) {
             case "talk": {
-                console.log($scope.messages);
                 $("#chat-messages").html(data.message);
+                $(document).trigger('newmessage');
                 break;
             }
             case "join": {
                 $scope.$apply(function() { $scope.chatUsers = data.chatUsers; });
                 $("#chat-messages").html(data.message);
+                $(document).trigger('newmessage');
                 break;
             }
             case "quit": {
@@ -125,3 +127,6 @@ function chatWebSocketBuilder(username, $scope) {
 
     return chatWs;
 }
+
+function scrollDownChatBox() { $("#chat-messages").animate({scrollTop : $("#chat-messages")[0].scrollHeight}); }
+$(document).on('newmessage', function () { scrollDownChatBox(); });
