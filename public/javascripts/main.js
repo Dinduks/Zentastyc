@@ -60,7 +60,7 @@ function ZentastycCtrl($scope) {
 
     $scope.newRestaurant = function() {
        var restaurantName = prompt("Where?");
-       $scope.joinRestaurant(restaurantName);
+       if (restaurantName) $scope.joinRestaurant(restaurantName);
     }
 
     /* Chat */
