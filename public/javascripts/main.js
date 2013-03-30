@@ -18,34 +18,8 @@ function ZentastycCtrl($scope) {
 
     id = name;
 
-    ws = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.ws(id, name).url);
-    wsChat = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.wsChat(name).url);
-
-    ws.onerror = function (error) {
-        throw "An error happened on the WebSocket: " + error;
-    }
-
-    ws.onopen = function () {
-        $scope.$apply(function () {
-            user = new User(name, id);
-            $scope.restaurants.none.push(user);
-            currentRestaurantName = "No restaurant";
-        });
-    };
-
-    ws.onmessage = function(event) {
-        var data = JSON.parse(event.data);
-        var restaurants = {};
-
-        data.users.map(function(user) {
-            if (undefined === restaurants[user.restaurant]) restaurants[user.restaurant] = new Restaurant(user.restaurant);
-            restaurants[user.restaurant].push(user);
-        });
-
-        $scope.$apply(function() {
-            $scope.restaurants = restaurants;
-        });
-    };
+    ws = restaurantsWebSocketBuilder(id, name, $scope);
+    wsChat = chatWebSocketBuilder(name, $scope);
 
     $scope.joinRestaurant = function (restaurantName) {
         var restaurant;
@@ -77,7 +51,62 @@ function ZentastycCtrl($scope) {
         $("#chat-messages").append("&gt; " + name + ": " + this.message + "<br>");
     }
 
-    wsChat.onmessage = function(event) {
+}
+
+function User(name, id) {
+    var name, id;
+    this.name = name;
+    this.id = id.toString();
+}
+
+function Restaurant(name) {
+    var name, users;
+    this.name = name;
+    this.users = [];
+
+    this.push = function (user) { this.users.push(user); };
+}
+
+function restaurantsWebSocketBuilder(id, username, $scope) {
+    var ws;
+
+    ws = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.ws(id, username).url);
+
+    ws.onerror = function (error) {
+        throw "An error happened on the restaurants WebSocket: " + error;
+    }
+
+    ws.onopen = function () {
+        $scope.$apply(function () {
+            user = new User(username, id);
+            $scope.restaurants.none.push(user);
+            currentRestaurantName = "No restaurant";
+        });
+    };
+
+    ws.onmessage = function(event) {
+        var data = JSON.parse(event.data);
+        var restaurants = {};
+
+        data.users.map(function(user) {
+            if (undefined === restaurants[user.restaurant]) restaurants[user.restaurant] = new Restaurant(user.restaurant);
+            restaurants[user.restaurant].push(user);
+        });
+
+        $scope.$apply(function() {
+            $scope.restaurants = restaurants;
+        });
+    };
+
+    return ws;
+}
+
+function chatWebSocketBuilder(username, $scope) {
+    var chatWs;
+
+    chatWs = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.wsChat(username).url);
+
+    chatWs.onmessage = function(event) {
         var data = JSON.parse(event.data);
 
         switch (data.kind) {
@@ -96,18 +125,6 @@ function ZentastycCtrl($scope) {
             }
         }
     }
-}
 
-function User(name, id) {
-    var name, id;
-    this.name = name;
-    this.id = id.toString();
-}
-
-function Restaurant(name) {
-    var name, users;
-    this.name = name;
-    this.users = [];
-
-    this.push = function (user) { this.users.push(user); };
+    return chatWs;
 }
