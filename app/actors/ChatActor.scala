@@ -37,7 +37,7 @@ object ChatHandler {
       }
     }
 
-    result.onComplete( _ => chatActor ! UpdateAll)
+    result.onComplete( _ => chatActor ! NewUser(username))
 
     result
   }
@@ -54,7 +54,6 @@ class ChatActor extends Actor {
     case Join(username) => {
       chatUsers += username
       sender ! outEnumerator
-      updateAll("join", username, Some(chatLog))
     }
 
     case Talk(username, message) => {
@@ -67,6 +66,8 @@ class ChatActor extends Actor {
       chatUsers = chatUsers diff Seq(username)
       updateAll("quit", username, None)
     }
+
+    case NewUser(username) => updateAll("join", username, Some(chatLog))
 
   }
 
@@ -86,3 +87,4 @@ case class Join(username: String)
 case class Quit(username: String)
 case class Talk(username: String, message: String)
 case class NotifyJoin(username: String)
+case class NewUser(username: String)

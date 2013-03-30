@@ -60,7 +60,7 @@ function ZentastycCtrl($scope) {
 
     $scope.newRestaurant = function() {
        var restaurantName = prompt("Where?");
-        $scope.joinRestaurant(restaurantName);
+       $scope.joinRestaurant(restaurantName);
     }
 
     /* Chat */
@@ -80,19 +80,16 @@ function ZentastycCtrl($scope) {
         switch (data.kind) {
             case "talk": {
                 $("#chat-messages").html(data.message);
+                break;
             }
             case "join": {
-                console.log("join");
-                console.log(data.chatUsers);
                 $scope.$apply(function() { $scope.chatUsers = data.chatUsers; });
                 $("#chat-messages").html(data.message);
+                break;
             }
             case "quit": {
-                console.log("quit");
-                setTimeout(function () {
-                    $scope.$apply(function() {
-                    });
-                }, 100);
+                $scope.$apply(function() { $scope.chatUsers = data.chatUsers; });
+                break;
             }
         }
     }

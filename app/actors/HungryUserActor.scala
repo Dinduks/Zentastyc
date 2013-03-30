@@ -55,7 +55,6 @@ class HungryUserActor extends Actor {
     case Connect(id, name) => {
       if (!hungryUsers.contains(id)) hungryUsers += id -> HungryUser(id, name, noRestaurantTitle)
       sender ! outEnumerator
-      updateAll
     }
 
     case JoinRestaurant(id, restaurantName) => {
