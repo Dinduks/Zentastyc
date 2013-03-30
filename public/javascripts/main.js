@@ -70,9 +70,11 @@ function ZentastycCtrl($scope) {
     $scope.sendMessage = function () {
         if ("" == this.message) return false;
 
-        var message = this.message;
+        wsChat.send(JSON.stringify({ kind: "talk", data: { userId: user.id, message: this.message }}));
         this.message = "";
-        wsChat.send(JSON.stringify({ kind: "talk", data: { userId: user.id, message: message }}));
+
+        // Immediate visual feedback after sending a message
+        $("#chat-messages").append("&gt; " + name + ": " + this.message + "<br>");
     }
 
     wsChat.onmessage = function(event) {
