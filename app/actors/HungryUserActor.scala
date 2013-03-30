@@ -55,14 +55,15 @@ class HungryUserActor extends Actor {
     case Connect(id, name) => {
       if (!hungryUsers.contains(id)) hungryUsers += id -> HungryUser(id, name, noRestaurantTitle)
       sender ! outEnumerator
-      updateAll
     }
+
     case JoinRestaurant(id, restaurantName) => {
       hungryUsers.get(id).map { hungryUser =>
         hungryUsers += id -> hungryUser.copy(restaurant = restaurantName)
       }
       updateAll
     }
+
     case UpdateAll => {
       updateAll
     }
@@ -76,7 +77,7 @@ class HungryUserActor extends Actor {
   }
 
   def updateAll {
-    val msg = JsObject(Seq("users" -> Json.toJson(hungryUsers)))
+    val msg = JsObject(Seq("kind" -> JsString("restaurant"), "users" -> Json.toJson(hungryUsers)))
     outChannel.push(msg)
   }
 

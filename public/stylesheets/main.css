@@ -6,11 +6,15 @@ body {
   height: 100%;
 }
 
+#wrapper {
+    height: 100%;
+}
+
 #container {
   padding: 2em;
-  height: calc(100% - 2em);
-  height: -webkit-calc(100% - 2em);
-  height: -moz-calc(100% - 2em);
+  height: calc(65% - 2em);
+  height: -webkit-calc(65% - 2em);
+  height: -moz-calc(65% - 2em);
 }
 
 #restaurants {
@@ -48,4 +52,50 @@ body {
 .tasty {
   color: #006dcc;
   font-style: italic;
+}
+
+div#chat-container {
+    height: 35%;
+    padding-bottom: 50px;
+    height: calc(35% - 2em);
+    height: -webkit-calc(35% - 2em - 50px);
+    height: -moz-calc(35% - 2em - 50px);
+}
+
+div#users-list {
+    float: left;
+    width: 20%;
+}
+
+#chat-area {
+    padding: 0;
+    width: 79%;
+    height: 100%;
+    float: left;
+}
+
+#chat-messages  {
+    min-height: calc(100% - 20px);
+    min-height: -webkit-calc(100% - 20px);
+    min-height: -moz-calc(100% - 20px);
+    min-height: calc(100% - 20px);
+    min-height: -webkit-calc(100% - 20px);
+    min-height: -moz-calc(100% - 20px);
+    width: calc(100% - 10px);
+    width: -webkit-calc(100% - 20px);
+    width: -moz-calc(100% - 20px);
+    vertical-align: middle;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    overflow-y: scroll;
+}
+
+input#chat-input {
+    width: calc(100% - 10px);
+    width: -webkit-calc(100% - 20px);
+    width: -moz-calc(100% - 20px);
+    height: 20px;
 }

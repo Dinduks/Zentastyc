@@ -1,6 +1,6 @@
 "use strict";
 
-var ws;
+var ws, wsChat;
 var user;
 var currentRestaurantName;
 
@@ -18,6 +18,11 @@ function ZentastycCtrl($scope) {
     id = name;
 
     ws = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.ws(id, name).url);
+    wsChat = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.wsChat(name).url);
+
+    ws.onerror = function (error) {
+        throw "An error happened on the WebSocket: " + error;
+    }
 
     ws.onopen = function () {
         $scope.$apply(function () {
@@ -55,10 +60,39 @@ function ZentastycCtrl($scope) {
 
     $scope.newRestaurant = function() {
        var restaurantName = prompt("Where?");
-        $scope.joinRestaurant(restaurantName);
+       $scope.joinRestaurant(restaurantName);
     }
-    $(document).ready(function () {
-    });
+
+    /* Chat */
+    $scope.chatUsers = [];
+
+    $scope.sendMessage = function () {
+        if ("" == this.message) return false;
+
+        var message = this.message;
+        this.message = "";
+        wsChat.send(JSON.stringify({ kind: "talk", data: { userId: user.id, message: message }}));
+    }
+
+    wsChat.onmessage = function(event) {
+        var data = JSON.parse(event.data);
+
+        switch (data.kind) {
+            case "talk": {
+                $("#chat-messages").html(data.message);
+                break;
+            }
+            case "join": {
+                $scope.$apply(function() { $scope.chatUsers = data.chatUsers; });
+                $("#chat-messages").html(data.message);
+                break;
+            }
+            case "quit": {
+                $scope.$apply(function() { $scope.chatUsers = data.chatUsers; });
+                break;
+            }
+        }
+    }
 }
 
 function User(name, id) {
