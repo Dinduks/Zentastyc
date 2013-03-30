@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /ws                         controllers.Application.ws(id: String, name: String)
+GET     /ws                         controllers.Application.ws(name: String)
 GET     /wsChat                     controllers.Application.wsChat(name: String)
 
 # Map static resources from the /public folder to the /assets URL path

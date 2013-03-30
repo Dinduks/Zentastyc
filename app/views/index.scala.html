@@ -12,7 +12,7 @@
                     <h4>{{restaurant.name}}</h4>
                     <ul>
                         <li ng-repeat="user in restaurant.users">
-                            {{user.name}}
+                            {{user.username}}
                         </li>
                     </ul>
                 </li>
@@ -31,7 +31,7 @@
             </ul>
         </div>
         <div id="chat-area">
-            <p id="chat-messages"></p>
+            <p id="chat-messages" ng-model="messages"></p>
             <form ng-submit="sendMessage()"><input type="text" ng-model="message" name="message" id="chat-input" /></form>
         </div>
     </div>

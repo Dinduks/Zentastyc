@@ -13,25 +13,26 @@ import play.api.libs.json._
 import play.api.libs.json.JsObject
 import play.libs.Akka
 import scala.concurrent.duration._
+import scala.concurrent.Future
 
 object HungryUsersHandler {
 
   implicit val timeout = Timeout(1 second)
   lazy val mainActor: ActorRef = Akka.system.actorOf(Props[HungryUserActor])
 
-  def join(id: String, name: String): scala.concurrent.Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
-    val result = (mainActor ? Connect(id, name)).map {
+  def join(username: String): Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
+    val result = (mainActor ? Connect(username)).map {
       case enumerator: Enumerator[JsValue] => {
         val iteratee = Iteratee.foreach[JsValue] { event =>
           (event \ "kind").as[String] match {
             case "joinrestaurant" => {
-              val userId = (event \ "data" \ "userId").as[String]
+              val username = (event \ "data" \ "username").as[String]
               val restaurantName = (event \ "data" \ "restaurantName").as[String]
-              mainActor ! JoinRestaurant(userId, restaurantName)
+              mainActor ! JoinRestaurant(username, restaurantName)
             }
           }
         }.mapDone { _ =>
-          mainActor ! HungryQuit(id, name)
+          mainActor ! HungryQuit(username)
         }
 
         (iteratee, enumerator)
@@ -52,14 +53,14 @@ class HungryUserActor extends Actor {
   val noRestaurantTitle = "No restaurant"
 
   def receive = {
-    case Connect(id, name) => {
-      if (!hungryUsers.contains(id)) hungryUsers += id -> HungryUser(id, name, noRestaurantTitle)
+    case Connect(username) => {
+      if (!hungryUsers.contains(username)) hungryUsers += username -> HungryUser(username, noRestaurantTitle)
       sender ! outEnumerator
     }
 
-    case JoinRestaurant(id, restaurantName) => {
-      hungryUsers.get(id).map { hungryUser =>
-        hungryUsers += id -> hungryUser.copy(restaurant = restaurantName)
+    case JoinRestaurant(username, restaurantName) => {
+      hungryUsers.get(username).map { hungryUser =>
+        hungryUsers += username -> hungryUser.copy(restaurant = restaurantName)
       }
       updateAll
     }
@@ -68,8 +69,8 @@ class HungryUserActor extends Actor {
       updateAll
     }
 
-    case HungryQuit(userId, username) => {
-      hungryUsers.get(userId).map { hungryUser =>
+    case HungryQuit(username) => {
+      hungryUsers.get(username).map { hungryUser =>
         if (hungryUser.restaurant == noRestaurantTitle) hungryUsers -= username
       }
       updateAll
@@ -83,7 +84,7 @@ class HungryUserActor extends Actor {
 
 }
 
-case class Connect(id: String, name: String)
-case class JoinRestaurant(userId: String, restaurantName: String)
+case class Connect(username: String)
+case class JoinRestaurant(username: String, restaurantName: String)
 case class UpdateAll()
-case class HungryQuit(userId: String, username: String)
+case class HungryQuit(username: String)

@@ -5,26 +5,23 @@ var user;
 var currentRestaurantName;
 
 function ZentastycCtrl($scope) {
-    var id;
-    var name;
+    var username;
 
-    name = localStorage.getItem('name');
-    while (name === null || name === "null" || name.trim().length === 0) {
-        name = prompt("Name?");
-        localStorage.setItem('name', name);
+    username = localStorage.getItem('username');
+    while (username === null || username === "null" || username.trim().length === 0) {
+        username = prompt("Name?");
+        localStorage.setItem('username', username);
     }
 
     $scope.restaurants = { none: new Restaurant("No restaurant") };
 
-    id = name;
-
-    ws = restaurantsWebSocketBuilder(id, name, $scope);
-    wsChat = chatWebSocketBuilder(name, $scope);
+    ws = restaurantsWebSocketBuilder(username, $scope);
+    wsChat = chatWebSocketBuilder(username, $scope);
 
     $scope.joinRestaurant = function (restaurantName) {
         var restaurant;
 
-        ws.send(JSON.stringify({ kind: "joinrestaurant", data: { userId: user.id, restaurantName: restaurantName }}));
+        ws.send(JSON.stringify({ kind: "joinrestaurant", data: { username: user.username, restaurantName: restaurantName }}));
 
         restaurant = new Restaurant(restaurantName);
         $scope.restaurants[restaurantName] = restaurant;
@@ -44,19 +41,18 @@ function ZentastycCtrl($scope) {
     $scope.sendMessage = function () {
         if ("" == this.message) return false;
 
-        wsChat.send(JSON.stringify({ kind: "talk", data: { userId: user.id, message: this.message }}));
+        wsChat.send(JSON.stringify({ kind: "talk", data: { username: user.username, message: this.message }}));
         this.message = "";
 
         // Immediate visual feedback after sending a message
-        $("#chat-messages").append("&gt; " + name + ": " + this.message + "<br>");
+        $("#chat-messages").append("&gt; " + username + ": " + this.message + "<br>");
     }
 
 }
 
-function User(name, id) {
-    var name, id;
-    this.name = name;
-    this.id = id.toString();
+function User(username) {
+    var username;
+    this.username = username;
 }
 
 function Restaurant(name) {
@@ -67,10 +63,10 @@ function Restaurant(name) {
     this.push = function (user) { this.users.push(user); };
 }
 
-function restaurantsWebSocketBuilder(id, username, $scope) {
+function restaurantsWebSocketBuilder(username, $scope) {
     var ws;
 
-    ws = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.ws(id, username).url);
+    ws = new WebSocket("ws://" + window.location.host + jsRoutes.controllers.Application.ws(username).url);
 
     ws.onerror = function (error) {
         throw "An error happened on the restaurants WebSocket: " + error;
@@ -78,7 +74,7 @@ function restaurantsWebSocketBuilder(id, username, $scope) {
 
     ws.onopen = function () {
         $scope.$apply(function () {
-            user = new User(username, id);
+            user = new User(username);
             $scope.restaurants.none.push(user);
             currentRestaurantName = "No restaurant";
         });
@@ -111,6 +107,7 @@ function chatWebSocketBuilder(username, $scope) {
 
         switch (data.kind) {
             case "talk": {
+                console.log($scope.messages);
                 $("#chat-messages").html(data.message);
                 break;
             }

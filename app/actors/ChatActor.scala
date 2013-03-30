@@ -24,9 +24,9 @@ object ChatHandler {
         val iteratee = Iteratee.foreach[JsValue] { event =>
           (event \ "kind").as[String] match {
             case "talk" => {
-              val userId = (event \ "data" \ "userId").as[String]
+              val username = (event \ "data" \ "username").as[String]
               val message = (event \ "data" \ "message").as[String]
-              chatActor ! Talk(userId, message)
+              chatActor ! Talk(username, message)
             }
           }
         }.mapDone { _ =>

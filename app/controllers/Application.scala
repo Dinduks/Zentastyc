@@ -11,12 +11,12 @@ object Application extends Controller {
     Ok(views.html.index())
   }
 
-  def ws(id: String, name: String) = WebSocket.async[JsValue] { request =>
-    HungryUsersHandler.join(id, name)
+  def ws(name: String) = WebSocket.async[JsValue] { request =>
+    HungryUsersHandler join name
   }
 
   def wsChat(name: String) = WebSocket.async[JsValue] { request =>
-    ChatHandler.join(name)
+    ChatHandler join name
   }
 
 }

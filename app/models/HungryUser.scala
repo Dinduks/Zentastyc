@@ -1,7 +1,6 @@
 package models
 
 case class HungryUser(
-  id: String,
-  name: String,
+  username: String,
   restaurant: String
 )

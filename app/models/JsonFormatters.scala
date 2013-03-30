@@ -9,14 +9,12 @@ object JsonFormatters {
 
   implicit object HungryUserFormat extends Format[HungryUser] {
     def reads(json: JsValue)  = JsSuccess(HungryUser(
-      (json \ "id").as[String],
-      (json \ "name").as[String],
+      (json \ "username").as[String],
       (json \ "restaurant").as[String]
     ))
 
     def writes(hungryUser: HungryUser) = JsObject(Seq(
-      "id" -> JsString(hungryUser.id),
-      "name" -> JsString(hungryUser.name),
+      "username" -> JsString(hungryUser.username),
       "restaurant" -> JsString(hungryUser.restaurant)
     ))
   }
@@ -26,10 +24,9 @@ object JsonFormatters {
 
     def writes(hungryUsers: HungryUsersIndex) = {
       JsArray(
-        hungryUsers.map { case (id, hungryUser) =>
+        hungryUsers.map { case (username, hungryUser) =>
           JsObject(Seq(
-            "id" -> JsString(hungryUser.id),
-            "name" -> JsString(hungryUser.name),
+            "username" -> JsString(hungryUser.username),
             "restaurant" -> JsString(hungryUser.restaurant)
           ))
         }.toSeq
