@@ -70,7 +70,7 @@ class HungryUserActor extends Actor {
 
     case HungryQuit(userId, username) => {
       hungryUsers.get(userId).map { hungryUser =>
-        hungryUsers -= username
+        if (hungryUser.restaurant == noRestaurantTitle) hungryUsers -= username
       }
       updateAll
     }
