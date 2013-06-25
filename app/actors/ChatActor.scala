@@ -21,7 +21,7 @@ object ChatHandler {
   def join(username: String): scala.concurrent.Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
     val result = (chatActor ? Join(username)).map {
       case enumerator: Enumerator[JsValue] => {
-        val iteratee = Iteratee.foreach[JsValue] { event =>
+        val iteratee = Iteratee.foreach[JsValue] { event: JsValue =>
           (event \ "kind").as[String] match {
             case "talk" => {
               val username = (event \ "data" \ "username").as[String]
